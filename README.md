@@ -1,22 +1,29 @@
-# Node.js assigment - 1 : Simple node server
+# Node Server
 
-## Total points = 5
+This repository contains a basic Node.js server application with various features. The server application allows you to handle different HTTP requests and perform specific actions.
 
-### Purpose of this assignment -
+## Level 1: Node Server Basic Requirements
 
-- Testing students skills on
-  - creating node.js server
-  - creating http routes
-  - handling request and response object
+In this level, the server application includes the following features:
 
-### [Click here to see the project demo](https://node-app-serve.herokuapp.com/contact)
+1. Set up a server that listens on a specified port (e.g., port 8080).
+2. Create a route to handle GET requests to the root URL ("/") and send a "Hello, World!" response.
+3. Implement a route to handle POST requests to the root URL ("/") and log the received data to the console.
 
-### Assignment steps -
+## Level 2: Node Server Additional Requirements
 
-- part 1: Create a node server in index.js (point-1)
-- part 2: Create 3 routes & render html files in index.js (point-2)
-  - /home -> home.html
-  - /about -> about.html
-  - /contact -> contact.html
-- part 3: Handling any unwanted route with an error.html in index.js (point-1)
-- part 4: Deploy the server on Heroku (point-1)
+In addition to the basic requirements, the server application enhances its functionality with the following features:
+
+1. Create a route to handle GET requests to "/books or /products" and send a response with information accordingly.
+2. Implement a route to handle POST requests to "/books or /products" and save the received data to a file on the server.
+
+## Level 3: Node Server Bonus Requirements (Optional)
+
+If you have a higher skill level and finish the previous requirements before the deadline, you can tackle the following bonus tasks:
+Peer Review:
+- Review the code and implementation of 2 assignments from other participants.
+- Provide constructive feedback and suggestions for improvement.
+
+`Please note that the bonus requirements and reviews are optional and can be completed if you have additional time and advanced skills.`
+
+Happy coding!
