@@ -1,0 +1,120 @@
+openapi: 3.0.0
+
+info:
+  title: E-commerce 
+  description: E-commerce API
+  version: 1.0.0
+  contact:
+    name: Sultana Almalki
+    email: almalki.sultana@gmail.com
+
+servers:
+  - url: http://127.0.0.1:8080
+    
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - title
+        - price
+      properties:
+        id:
+          type: string
+          description: the id of product will be automatically generated in the backend
+        title:
+          type: string
+          description: the name of the product
+        price:
+          type: number
+          description: the price of the product
+paths:
+  /products:
+    get:
+      summary: returned all products
+      responses:
+        200:
+          description: successfully returned all products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+        500:
+          description: server error
+
+    post:
+      summary: create a product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      responses:
+        201:
+          description: product is created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        500:
+          description: server error
+
+  /products/{productId}:
+    get:
+      summary: returned single product
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successfully returned single product 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        500:
+          description: server error
+
+    put:
+      summary: update single product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Product"
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: successfully update product 
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        500:
+          description: server error
+
+    delete:
+      summary: delete single product
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: product is delete
+        404:
+          description: product not found
+        500:
+          description: server error
