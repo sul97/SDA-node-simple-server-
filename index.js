@@ -1,12 +1,8 @@
 import http from 'http';
+import fs from 'fs/promises';
+import { parse } from 'querystring';
 
 const PORT = '8080'
-
-let products = [
-  { id: '1', title: 'apple iphone 15', price: 4000 },
-  { id: '2', title: 'apple iphone 14', price: 3500 },
-  { id: '3', title: 'apple iphone 13', price: 3000 } 
-]
 
 const errorHandler = (res, statusCode, message) => {
   res.writeHead(statusCode, { 'Content-Type': 'text/plain' });
@@ -14,24 +10,40 @@ const errorHandler = (res, statusCode, message) => {
   res.end()
 }
 
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   /* handle http requests */
   if (req.method === 'GET' && req.url === '/') {
     try {
       res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.write('<h1>Hello World</h1>');
+      res.write('<h1>Hello World!!</h1>');
       res.end()
     } catch (error) {
       errorHandler(res, 500, 'Server Error');
     }
 
-  } else if ((req.method === 'POST' && req.url === '/')) { }
+  } else if ((req.method === 'POST' && req.url === '/')) { 
+    try{
+      let body = "";
+        req.on('data', (data) => {
+          body = body + data;
+        });
+        req.on('end',()=>{
+          console.log('Received Data :',body);
+          res.writeHead(201,{'Content-Type':'text/plain'});
+          res.write('Data received');
+          res.end();
+        });
+    } catch{
+
+    }
+  }
     
-    
+    //all products
   else if (req.method === 'GET' && req.url === '/products') {
     try {
+      const products=JSON.parse(await fs.readFile('products.json', 'utf-8'));
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.write(JSON.stringify(products));
       res.end()
@@ -40,8 +52,10 @@ const server = http.createServer((req, res) => {
     }
   }
     
+  //single product
   else if (req.method === 'GET' && req.url.match(/\/products\/([0-9]+)/)) {
     try {
+      const products=JSON.parse(await fs.readFile('products.json', 'utf-8'));
       const id = req.url?.split('/')[2]
       const product = products.find((product) => product.id === id)
       
@@ -58,34 +72,44 @@ const server = http.createServer((req, res) => {
     }
   }
     
+  //create product
   else if (req.method === 'POST' && req.url === '/products') {
      try {
-      res.writeHead(200, { 'Content-Type': 'text/plain' });
-      res.write('Product is Created');
-      res.end()
+      let body = '';
+
+        req.on('data', (chunk) => {
+          body = body + chunk;
+          console.log(body)
+        });
+        req.on('end', async() => {
+          const data = parse(body);
+          const newProduct = {
+            id: new Date().getTime().toString(),
+            title: data.title,
+            price: data.price,
+          };
+          const existingProducts =JSON.parse(await fs.readFile('products.json', 'utf-8'));
+          existingProducts.push(newProduct)
+          await fs.writeFile('products.json', JSON.stringify(existingProducts));
+          res.writeHead(201, { 'Content-Type': 'text/plain' });
+          res.write('Product is Created');
+          res.end()
+        });
     } catch (error) {
       errorHandler(res, 500, 'Server Error');
     }
   }
     
-  else if (req.method === 'PUT' && req.url.match(/\/products\/([0-9]+)/)) {
-    try {
-      const id = req.url?.split('/')[2]
-      res.writeHead(200, { 'Content-Type': 'text/plain' });
-      res.write('Product is Updated');
-      res.end()
-    } catch (error) {
-      errorHandler(res, 500, 'Server Error');
-    }
-  }
-    
+  //delete product
   else if (req.method === 'DELETE' && req.url.match(/\/products\/([0-9]+)/)) {
     try {
+      const products=JSON.parse(await fs.readFile('products.json', 'utf-8'));
       const id = req.url?.split('/')[2]
       const product = products.findIndex((product) => product.id === id)
-
+     
       if (product !== -1) {
       products.splice(product, 1);
+      await fs.writeFile('products.json', JSON.stringify(products));
 
       res.writeHead(200, { 'Content-Type': 'text/plain' });
       res.write('Product is deleted');
