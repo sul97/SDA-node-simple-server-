@@ -1,16 +1,39 @@
 import express from "express";
 import morgan from "morgan";
+import cors from "cors";
+import path from "path";
+
 import "dotenv/config";
 
 import productRoutes from "./routes/productRoutes.js";
+import usersRoutes from "./routes/userRoutes.js";
 
 const app = express();
 const port = process.env.PORT || 3001;
 
+app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(productRoutes);
+app.use("/products", productRoutes);
+
+const isLoggedIn = (req, res, next) => {
+  const login = true;
+  if (login) {
+    next();
+  }
+  return res.send("please login first");
+};
+
+const isAdnim = (req, res, next) => {
+  const admin = true;
+  if (admin) {
+    next();
+  }
+  return res.send("sorry you are not admin");
+};
+
+app.use("/users", isLoggedIn, isAdnim, usersRoutes);
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello World!!</h1>");
@@ -20,6 +43,11 @@ app.post("/", (req, res) => {
   const data = req.body;
   console.log("Received Data :", data);
   res.send("<h1>Data received</h1>");
+});
+
+app.get("/home", (req, res) => {
+  const filePath = path.resolve("./views/index.html");
+  res.sendFile(filePath);
 });
 
 app.listen(port, () => {

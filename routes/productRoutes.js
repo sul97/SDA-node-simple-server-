@@ -1,4 +1,11 @@
 import { Router } from "express";
+import { runValidation } from "../middleware/runValidation.js";
+
+import {
+  createProductValidation,
+  updateProductValidation,
+} from "../middleware/createProductValidation.js";
+
 import {
   getAllProducts,
   getSingleProduct,
@@ -9,10 +16,10 @@ import {
 
 const productRoutes = Router();
 
-productRoutes.get("/products", getAllProducts);
-productRoutes.get("/products/:id", getSingleProduct);
-productRoutes.post("/products", createProduct);
-productRoutes.put("/products/:id", updateProduct);
-productRoutes.delete("/products/:id", deleteProduct);
+productRoutes.get("/", getAllProducts);
+productRoutes.get("/:id", getSingleProduct);
+productRoutes.post("/", createProductValidation, runValidation, createProduct);
+productRoutes.put("/:id", updateProductValidation, runValidation,updateProduct);
+productRoutes.delete("/:id", deleteProduct);
 
 export default productRoutes;

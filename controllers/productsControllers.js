@@ -43,10 +43,12 @@ export const getSingleProduct = async (req, res) => {
 
 export const createProduct = async (req, res) => {
   try {
+    let { title, price } = req.body;
+
     const newProduct = {
       id: new Date().getTime().toString(),
-      title: req.body.title,
-      price: req.body.price,
+      title: title,
+      price: price,
     };
     const existingProducts = JSON.parse(
       await fs.readFile("products.json", "utf-8")
@@ -73,10 +75,10 @@ export const updateProduct = async (req, res) => {
       return;
     }
     if (title) {
-      products[index].title = title;
+      products[index].title = title ?? products[index].title;
     }
     if (price) {
-      products[index].price = price;
+      products[index].price = price ?? products[index].price;
     }
 
     await fs.writeFile("products.json", JSON.stringify(products));
