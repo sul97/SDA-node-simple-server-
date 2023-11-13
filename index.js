@@ -26,23 +26,7 @@ app.use(limiter);
 
 app.use("/products", productRoutes);
 
-const isLoggedIn = (req, res, next) => {
-  const login = true;
-  if (login) {
-    next();
-  }
-  return res.send("please login first");
-};
-
-const isAdnim = (req, res, next) => {
-  const admin = true;
-  if (admin) {
-    next();
-  }
-  return res.send("sorry you are not admin");
-};
-
-app.use("/users", isLoggedIn, isAdnim, usersRoutes);
+app.use("/users",usersRoutes);
 
 app.get("/", (req, res) => {
   res.send("<h1>Hello World!!</h1>");

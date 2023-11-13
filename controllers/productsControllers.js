@@ -47,8 +47,8 @@ export const createProduct = async (req, res) => {
 
     const newProduct = {
       id: new Date().getTime().toString(),
-      title: title,
-      price: price,
+      title,
+      price,
     };
     const existingProducts = JSON.parse(
       await fs.readFile("products.json", "utf-8")
@@ -74,12 +74,9 @@ export const updateProduct = async (req, res) => {
       errorResponse(res, 404, `product not found with this ID ${id}`);
       return;
     }
-    if (title) {
-      products[index].title = title ?? products[index].title;
-    }
-    if (price) {
-      products[index].price = price ?? products[index].price;
-    }
+
+    products[index].title = title ?? products[index].title;
+    products[index].price = price ?? products[index].price;
 
     await fs.writeFile("products.json", JSON.stringify(products));
     successResponse(res, 200, "single product is updated", products[index]);
@@ -91,17 +88,17 @@ export const updateProduct = async (req, res) => {
 export const deleteProduct = async (req, res) => {
   try {
     const id = req.params.id;
-    const products = JSON.parse(await fs.readFile("products.json", "utf-8"));
-    const product = products.findIndex((product) => product.id === id);
+    let products = JSON.parse(await fs.readFile("products.json", "utf-8"));
+    const index = products.findIndex((product) => product.id === id);
 
-    if (product !== -1) {
-      products.splice(product, 1);
-      await fs.writeFile("products.json", JSON.stringify(products));
-      successResponse(res, 200, "single product is deleted");
-    } else {
-      errorResponse(res, 404, `product not found with this ID ${id}`);
+    if (index === -1) {
+      errorResponse(res, 404, `Product not found with this ID: ${id}`);
       return;
     }
+
+    products = products.filter((product) => product.id !== id);
+    await fs.writeFile("products.json", JSON.stringify(products));
+    successResponse(res, 200, "Single product is deleted");
   } catch (error) {
     errorResponse(res, 500, error.message);
   }
